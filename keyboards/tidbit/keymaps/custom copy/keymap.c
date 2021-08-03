@@ -17,7 +17,6 @@
 #include QMK_KEYBOARD_H
 #include "remote_kb.h"
 #include "bitc_led.h"
-extern MidiDevice midi_device;
 
 #define _BASE     0
 #define _VIA1     1
@@ -25,26 +24,12 @@ extern MidiDevice midi_device;
 #define _VIA3     3
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-
-    /* BASE/MIDI
-    * |------+------+------+------|
-   * |       | D2  | E2   |  Ch 1 |
-   * ,----------------------------
-   * | KNOB  | ON  |  OFF |   E  |
-   * |------+------+------+------|
-   * | D3   |  E3  |  F3  |  G3  |
-   * |------+------+------+------|
-   * | G2   |  A2  |  B2  |   C2 |
-   * |------+------+------+------|
-   * |  C2 |  D2  | E2   |  F2   |
-   * `----------------------------
-   */
   [_BASE] = LAYOUT(
-        MI_ON,   MI_OFF, MI_CH1, \
-  EEP_RST, KC_8,     KC_9, KC_PSLS, \
-  MI_D_3, MI_E_3, MI_F_3, MI_G_3, \
-  MI_G_2, MI_A_2, MI_B_2, MI_C_3, \
-  MI_C_2, MI_D_2, MI_E_2, MI_F_2  \
+        KC_F1,   KC_F2, KC_F3, \
+  KC_7, KC_8,     KC_9, KC_PSLS, \
+  KC_4, KC_5,     KC_6, KC_PAST, \
+  KC_1, KC_2,     KC_3, KC_PMNS, \
+  KC_0, KC_DOT, KC_ENT, KC_PPLS  \
   ),
 
   [_VIA1] = LAYOUT(
@@ -86,41 +71,14 @@ void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
 
-// bool encoder_update_user(uint8_t index, bool clockwise) {
-//   if (clockwise) {
-//     tap_code(KC_VOLU);
-//   } else {
-//     tap_code(KC_VOLD);
-//   } 
-//   return true;
-// }
-
 bool encoder_update_user(uint8_t index, bool clockwise) {
-  switch (get_highest_layer(layer_state)) {
-        case _BASE:
-          if (clockwise) {
-            tap_code(KC_VOLU);
-          }else {
-            tap_code(KC_VOLD);
-          }
-          return true;
-          break;
-        case _VIA1:
-          if (clockwise) {
-            tap_code(KC_SPACE);
-          }else {
-            tap_code(KC_BSPACE);
-          }
-          return true;
-          break;
-       
-        default:
-            // Or use the write_ln shortcut over adding '\n' to the end of your string
-            return true;
-    }
- 
+  if (clockwise) {
+    tap_code(KC_VOLU);
+  } else {
+    tap_code(KC_VOLD);
+  } 
+  return true;
 }
- 
 
 void led_set_kb(uint8_t usb_led) {
   if (usb_led & (1<<USB_LED_NUM_LOCK))
@@ -132,20 +90,20 @@ void led_set_kb(uint8_t usb_led) {
 #ifdef OLED_DRIVER_ENABLE
 void oled_task_user(void) {
     // Host Keyboard Layer Status
-    oled_write_P(PSTR("STAGE: "), false);
+    oled_write_P(PSTR("Layer: "), false);
 
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("S-IC \n Godspeed"), false);
+            oled_write_P(PSTR("1 \n"), false);
             break;
         case _VIA1:
-            oled_write_P(PSTR("S-II \n Accelerating..."), false);
+            oled_write_P(PSTR("2 \n"), false);
             break;
         case _VIA2:
-            oled_write_P(PSTR("S-IVB \n Earth Departure"), false);
+            oled_write_P(PSTR("3 \n"), false);
             break;
         case _VIA3:
-            oled_write_P(PSTR("EAGLE HAS LANDED \n "), false);
+            oled_write_P(PSTR("4 \n"), false);
             break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
