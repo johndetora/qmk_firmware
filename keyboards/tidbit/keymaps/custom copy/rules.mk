@@ -1,2 +1,4 @@
 OLED_DRIVER_ENABLE = yes
+MIDI_ENABLE = yes
 VIA_ENABLE = yes
+

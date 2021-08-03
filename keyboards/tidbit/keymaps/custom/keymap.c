@@ -22,15 +22,20 @@ extern MidiDevice midi_device;
 #define _BASE     0
 #define _VIA1     1
 #define _VIA2     2
-#define _VIA3     3
+#define _MIDI     3
+
+
+enum custom_keycodes {
+  COOL = SAFE_RANGE,
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /* BASE/MIDI
     * |------+------+------+------|
-   * |       | D2  | E2   |  Ch 1 |
+   * |       | D2  | Ch +  |  Ch - |
    * ,----------------------------
-   * | KNOB  | ON  |  OFF |   E  |
+   * | KNOB  | ON  | Oct - |Oct + |
    * |------+------+------+------|
    * | D3   |  E3  |  F3  |  G3  |
    * |------+------+------+------|
@@ -39,40 +44,50 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |  C2 |  D2  | E2   |  F2   |
    * `----------------------------
    */
+  
   [_BASE] = LAYOUT(
-        MI_ON,   MI_OFF, MI_CH1, \
-  EEP_RST, KC_8,     KC_9, KC_PSLS, \
-  MI_D_3, MI_E_3, MI_F_3, MI_G_3, \
-  MI_G_2, MI_A_2, MI_B_2, MI_C_3, \
-  MI_C_2, MI_D_2, MI_E_2, MI_F_2  \
+        TO(_VIA1), TO(_VIA2), TO(_MIDI), \
+  KC_7, KC_8,     KC_9, KC_PSLS, \
+  KC_4, KC_5,     KC_6, KC_PAST, \
+  KC_1, KC_2,     KC_3, KC_PMNS, \
+  COOL, KC_DOT, KC_ENT, KC_PPLS  \
   ),
-
   [_VIA1] = LAYOUT(
-           KC_TRNS, KC_TRNS, KC_TRNS, \
+           TO(_BASE), TO(_VIA2), TO(_MIDI), \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
   ),
-
   [_VIA2] = LAYOUT(
-           KC_TRNS, KC_TRNS, KC_TRNS, \
+           TO(_BASE), KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
+  ),
+  [_MIDI] = LAYOUT(
+        TO(_VIA1), MI_OCTD, MI_OCTU, \
+  TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
+  MI_D_2, MI_E_2, MI_F_2, MI_G_2, \
+  MI_G_1, MI_A_1, MI_B_1, MI_C_2, \
+  MI_C_1, MI_D_1, MI_E_1, MI_F_1  \
   ),
 
-  [_VIA3] = LAYOUT(
-           KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
-  ),
 };
 
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+   switch (keycode) {
+    case COOL:
+        if (record->event.pressed) {
+            // when keycode QMKBEST is pressed
+            SEND_STRING("test_beat");
+        } else {
+            // when keycode QMKBEST is released
+        }
+        break;
+    }
   process_record_remote_kb(keycode, record);
   return true;
 }
@@ -99,9 +114,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
   switch (get_highest_layer(layer_state)) {
         case _BASE:
           if (clockwise) {
-            tap_code(KC_VOLU);
+        tap_code(KC_VOLU);
           }else {
-            tap_code(KC_VOLD);
+        tap_code(KC_VOLD);
           }
           return true;
           break;
