@@ -46,18 +46,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
   
   [_BASE] = LAYOUT(
-        TO(_VIA1), TO(_VIA2), TO(_MIDI), \
-  KC_7, KC_8,     KC_9, KC_PSLS, \
+        TO(_VIA1), TO(_VIA1), TO(_MIDI), \
+  RESET, KC_8,     KC_9, KC_PSLS, \
   KC_4, KC_5,     KC_6, KC_PAST, \
   KC_1, KC_2,     KC_3, KC_PMNS, \
   COOL, KC_DOT, KC_ENT, KC_PPLS  \
   ),
   [_VIA1] = LAYOUT(
            TO(_BASE), TO(_VIA2), TO(_MIDI), \
+  RGB_TOG, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_LSHIFT, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
+   RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI  \
   ),
   [_VIA2] = LAYOUT(
            TO(_BASE), KC_TRNS, KC_TRNS, \
@@ -81,7 +81,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
    switch (keycode) {
     case COOL:
         if (record->event.pressed) {
-            // when keycode QMKBEST is pressed
             SEND_STRING("test_beat");
         } else {
             // when keycode QMKBEST is released
@@ -120,11 +119,12 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
           }
           return true;
           break;
+          // Backlight
         case _VIA1:
           if (clockwise) {
-            tap_code(KC_SPACE);
+          // tap_code(RGB_HUI);
           }else {
-            tap_code(KC_BSPACE);
+         //   tap_code(RGB_SAI);
           }
           return true;
           break;
@@ -151,16 +151,16 @@ void oled_task_user(void) {
 
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("S-IC \n Godspeed"), false);
+            oled_write_P(PSTR("S-IC \nGodspeed"), false);
             break;
         case _VIA1:
-            oled_write_P(PSTR("S-II \n Accelerating..."), false);
+            oled_write_P(PSTR("S-II \n Backlight"), false);
             break;
         case _VIA2:
-            oled_write_P(PSTR("S-IVB \n Earth Departure"), false);
+            oled_write_P(PSTR("S-IVB \nEarth Departure"), false);
             break;
-        case _VIA3:
-            oled_write_P(PSTR("EAGLE HAS LANDED \n "), false);
+        case _MIDI:
+            oled_write_P(PSTR("EAGLE HAS LANDED MIDI"), false);
             break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
