@@ -1,0 +1,14 @@
+1. Build firmware: qmk compile -kb <keyboard> -km default
+2. Flash firmware: Press button beneath tidbit to enter flash mode, open qmk toolbox and flash
+
+RGB Stuff: https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators
+
+void rgb_matrix_indicators_kb(void) {
+    rgb_matrix_set_color(index, red, green, blue);
+}
+
+
+set keyboard 
+ qmk config user.keyboard=kbdfans/kbd67/mkiirgb/v1
+ then:
+ qmk compile -km default
