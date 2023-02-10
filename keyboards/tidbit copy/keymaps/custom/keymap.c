@@ -45,31 +45,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |  C2 |  D2  | E2   |  F2   |
    * `----------------------------
    */
- 
-    [_BASE] = LAYOUT(
-        KC_KP_SLASH, KC_PAST, KC_PMNS, \
-  /* KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,\ */
-  TO(_VIA2), KC_7, KC_8, KC_9, \
-  KC_PPLS, KC_4, KC_5, KC_6,  \
-  MO(_VIA1), KC_1, KC_2,  KC_3,  \
-  KC_ENT, KC_DEL, KC_KP_DOT, KC_0     \
-  ),  
   
-     [_VIA1] = LAYOUT(
+  [_BASE] = LAYOUT(
+        TO(_VIA1), TO(_VIA2), TO(_MIDI), \
+  KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,\
+  MO(_BASEMOD), KC_5, KC_6, KC_PAST, \
+  KC_1, KC_2,  KC_3, KC_PMNS, \
+  COOL, KC_DOT, KC_ENT,  MO(_BASEMOD)  \
+  ),
+  [_VIA1] = LAYOUT(
+           TO(_BASE), TO(_VIA2), TO(_MIDI), \
+  RGB_TOG, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_LSHIFT, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+   RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI  \
+  ),
+  [_VIA2] = LAYOUT(
            TO(_BASE), KC_TRNS, KC_TRNS, \
   RESET, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
   KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_DEL, KC_TRNS, KC_TRNS  \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
   ),
-    [_VIA2] = LAYOUT(
-           RGB_HUI, RGB_SAI, RGB_VAI, \
-  TO(_BASE), RGB_HUD, RGB_SAD, RGB_VAD, \
- KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-   RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI  \
-  ),
-
   [_MIDI] = LAYOUT(
         TO(_VIA1), MI_OCTD, MI_OCTU, \
   TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
@@ -124,15 +121,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
           }
           return true;
           break;
-          // ENCODER LED
-        // case _VIA2:
-        //   if (clockwise) {
-        //     tap_code(RGB_HUI);
-        //   } else {
-        //     tap_code(RGB_MODE_REVERSE);
-        //   }
-        //   return true;
-        //   break;
           // Backlight
         case _BASEMOD:
           if (clockwise) {
@@ -188,7 +176,7 @@ void oled_task_user(void) {
     switch (get_highest_layer(layer_state)) {
         case _BASE:
             oled_write_P(PSTR("S-IC \nGodspeed"), false);
-            //  rgblight_setrgb (0xFF, 0xFF, 0xB2); for changing light per layer
+             rgblight_setrgb (0xFF, 0xFF, 0xB2);
             break;
         case _BASEMOD:
             oled_write_P(PSTR("MOD\nLeft Right"), false);

@@ -22,13 +22,7 @@ extern MidiDevice midi_device;
 #define _BASE     0
 #define _VIA1     1
 #define _VIA2     2
-#define _MIDI     3
-#define _BASEMOD  4
-
-
-enum custom_keycodes {
-  COOL = SAFE_RANGE,
-};
+#define _VIA3     3
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -45,63 +39,41 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |  C2 |  D2  | E2   |  F2   |
    * `----------------------------
    */
- 
-    [_BASE] = LAYOUT(
-        KC_KP_SLASH, KC_PAST, KC_PMNS, \
-  /* KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,\ */
-  TO(_VIA2), KC_7, KC_8, KC_9, \
-  KC_PPLS, KC_4, KC_5, KC_6,  \
-  MO(_VIA1), KC_1, KC_2,  KC_3,  \
-  KC_ENT, KC_DEL, KC_KP_DOT, KC_0     \
-  ),  
-  
-     [_VIA1] = LAYOUT(
-           TO(_BASE), KC_TRNS, KC_TRNS, \
-  RESET, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_DEL, KC_TRNS, KC_TRNS  \
-  ),
-    [_VIA2] = LAYOUT(
-           RGB_HUI, RGB_SAI, RGB_VAI, \
-  TO(_BASE), RGB_HUD, RGB_SAD, RGB_VAD, \
- KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-   RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI  \
+  [_BASE] = LAYOUT(
+        MI_TOG, MI_CHU, MI_CHD, \
+  RESET, MI_PORT, MI_OCTD, MI_OCTU, \
+  MI_D_3, MI_E_3, MI_F_3, MI_G_3, \
+  MI_G_2, MI_A_2, MI_B_2, MI_C_3, \
+  MI_C_2, MI_D_2, MI_E_2, MI_F_2  \
   ),
 
-  [_MIDI] = LAYOUT(
-        TO(_VIA1), MI_OCTD, MI_OCTU, \
-  TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
-  MI_D_2, MI_E_2, MI_F_2, MI_G_2, \
-  MI_G_1, MI_A_1, MI_B_1, MI_C_2, \
-  MI_C_1, MI_D_1, MI_E_1, MI_F_1  \
+  [_VIA1] = LAYOUT(
+           KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
   ),
 
-  [_BASEMOD] = LAYOUT(
-        TO(_VIA1), MI_OCTD, MI_OCTU, \
-  TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
-  MI_D_2, MI_E_2, MI_F_2, MI_G_2, \
-  MI_G_1, MI_A_1, MI_B_1, MI_C_2, \
-  //Reset Tiling
-  HYPR(KC_R), MI_D_1, MI_E_1, KC_TRNS  \
+  [_VIA2] = LAYOUT(
+           KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
+  ),
+
+  [_VIA3] = LAYOUT(
+           KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS  \
   ),
 };
 
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-   switch (keycode) {
-    case COOL:
-        if (record->event.pressed) {
-            SEND_STRING("test_beat");
-        } else {
-            
-        }
-        break;
-    }
- 
   process_record_remote_kb(keycode, record);
-
   return true;
 }
 
@@ -114,31 +86,30 @@ void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
 
+// bool encoder_update_user(uint8_t index, bool clockwise) {
+//   if (clockwise) {
+//     tap_code(KC_VOLU);
+//   } else {
+//     tap_code(KC_VOLD);
+//   } 
+//   return true;
+// }
+
 bool encoder_update_user(uint8_t index, bool clockwise) {
   switch (get_highest_layer(layer_state)) {
         case _BASE:
           if (clockwise) {
-            tap_code(KC_VOLU);
-          } else {
-            tap_code(KC_VOLD);
+        tap_code(KC_VOLU);
+          }else {
+        tap_code(KC_VOLD);
           }
           return true;
           break;
-          // ENCODER LED
-        // case _VIA2:
-        //   if (clockwise) {
-        //     tap_code(RGB_HUI);
-        //   } else {
-        //     tap_code(RGB_MODE_REVERSE);
-        //   }
-        //   return true;
-        //   break;
-          // Backlight
-        case _BASEMOD:
+        case _VIA1:
           if (clockwise) {
-            tap_code(KC_RIGHT);
+            tap_code(KC_SPACE);
           }else {
-            tap_code(KC_LEFT);
+            tap_code(KC_BSPACE);
           }
           return true;
           break;
@@ -158,51 +129,23 @@ void led_set_kb(uint8_t usb_led) {
     set_bitc_LED(LED_OFF);
 }
 
-// layer_state_t layer_state_set_user(layer_state_t state) {
-//     switch (get_highest_layer(layer_state)) {
-//     case _BASE:
-//         rgblight_setrgb (0x00,  0x00, 0xFF);
-        
-//         break;
-//     case _VIA1:
-//         rgblight_setrgb (0xFF,  0x00, 0x00);
-//         break;
-//     case _VIA2:
-//         rgblight_setrgb (0x00,  0xFF, 0x00);
-//         break;
-//     case _MIDI:
-//         rgblight_setrgb (0x7A,  0x00, 0xFF);
-//         break;
-//     default: //  for any other layers, or the default layer
-//         rgblight_setrgb (0x00,  0xFF, 0xFF);
-//         break;
-//     }
-//   return state;
-// }
-
 #ifdef OLED_DRIVER_ENABLE
 void oled_task_user(void) {
     // Host Keyboard Layer Status
     oled_write_P(PSTR("STAGE: "), false);
-  
+
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("S-IC \nGodspeed"), false);
-            //  rgblight_setrgb (0xFF, 0xFF, 0xB2); for changing light per layer
-            break;
-        case _BASEMOD:
-            oled_write_P(PSTR("MOD\nLeft Right"), false);
-            rgblight_setrgb (0xF9, 0x6D, 0x6D);
+            oled_write_P(PSTR("S-IC \n Godspeed"), false);
             break;
         case _VIA1:
-            oled_write_P(PSTR("S-II \nBacklight"), false);
+            oled_write_P(PSTR("S-II \n Accelerating..."), false);
             break;
         case _VIA2:
-            oled_write_P(PSTR("S-IVB \nEarth Departure"), false);
+            oled_write_P(PSTR("S-IVB \n Earth Departure"), false);
             break;
-        case _MIDI:
-            oled_write_P(PSTR("EAGLE HAS LANDED MIDI"), false);
-            rgblight_setrgb (0x7F, 0xFF, 0xFA);
+        case _VIA3:
+            oled_write_P(PSTR("EAGLE HAS LANDED \n "), false);
             break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
