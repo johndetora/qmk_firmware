@@ -113,21 +113,20 @@ void matrix_init_user(void) {
 void matrix_scan_user(void) {
   matrix_scan_remote_kb();
 }
-
 bool encoder_update_user(uint8_t index, bool clockwise) {
   switch (get_highest_layer(layer_state)) {
         case _BASE:
           if (clockwise) {
-            tap_code(KC_VOLU);
+            // tap_code(KC_VOLU);
           } else {
-            tap_code(KC_VOLD);
+            // tap_code(KC_VOLD);
           }
           return true;
           break;
           // ENCODER LED
         // case _VIA2:
         //   if (clockwise) {
-        //     tap_code(RGB_HUI);
+        //     tap_code(RGB_HUI);                             
         //   } else {
         //     tap_code(RGB_MODE_REVERSE);
         //   }
@@ -148,8 +147,8 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             return true;
     }
  
-}
- 
+} 
+
 
 void led_set_kb(uint8_t usb_led) {
   if (usb_led & (1<<USB_LED_NUM_LOCK))
@@ -183,11 +182,14 @@ void led_set_kb(uint8_t usb_led) {
 #ifdef OLED_DRIVER_ENABLE
 void oled_task_user(void) {
     // Host Keyboard Layer Status
+    int testChar = 1;
+
     oled_write_P(PSTR("STAGE: "), false);
   
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("S-IC \nGodspeed"), false);
+            // oled_write_P(PSTR("S-IC \nGodspeed"), false);
+        oled_write_P(testChar, false);
             //  rgblight_setrgb (0xFF, 0xFF, 0xB2); for changing light per layer
             break;
         case _BASEMOD:
