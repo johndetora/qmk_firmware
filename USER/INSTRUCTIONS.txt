@@ -1,0 +1,45 @@
+Update QMK:
+
+git fetch upstream
+
+1. Build firmware: qmk compile -kb <keyboard> -km default
+2. Flash firmware: Press button beneath tidbit to enter flash mode, open qmk toolbox and flash
+
+RGB Stuff: https://docs.qmk.fm/#/feature_rgb_matrix?id=indicators
+
+void rgb_matrix_indicators_kb(void) {
+    rgb_matrix_set_color(index, red, green, blue);
+}
+
+
+set keyboard 
+ qmk config user.keyboard=kbdfans/kbd67/mkiirgb/v1
+ then:
+ qmk compile -km default
+
+
+ RGB Stuff:
+
+
+ https://old.reddit.com/r/olkb/comments/fva7wq/layer_indication_leds_qmk/
+
+ 
+/////
+ void keyboard_pre_init_user(void) {
+  // Call the keyboard pre init code.
+
+  // Set our LED pins as output
+  setPinOutput(B0);
+  setPinOutput(B1);
+  setPinOutput(B2);
+  setPinOutput(B3);
+  setPinOutput(B4);
+}
+
+//////
+void keyboard_post_init_user(void) {
+  // Call the post init code.
+  rgblight_enable_noeeprom(); // enables Rgb, without saving settings
+  rgblight_sethsv_noeeprom(180, 255, 255); // sets the color to teal/cyan without saving
+  rgblight_mode_noeeprom(RGBLIGHT_MODE_BREATHING + 3); // sets mode to Fast breathing without saving
+}
