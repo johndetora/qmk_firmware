@@ -1,0 +1,23 @@
+These are the new files for keyboards/wilba_tech/rama_works_u80_a
+
+Replace everything except the keymaps folder. The configuration code for RGB_MATRIX is now in rama_works_u80_a.c
+
+In the first part of g_led_config on line 147 is where the LED index for each key is. Escape is LED index 70, in the top left corner.
+
+As far as making only the Escape key go on and off, there are a few ways to do that. The easiest way is probably to mask out all of the other keys, that way the only thing affected by RGB effects will be the Escape key. If you explain exactly what you want to do, I can help you write more specific code. In keymap.c:
+
+#define ESC_LED_INDEX 70
+bool rgb_matrix_indicators_user(void) {
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        if (i != ESC_LED_INDEX) rgb_matrix_set_color(i, RGB_OFF);
+    }
+    return true;
+}
+
+#define ESC_LED_INDEX 70
+bool rgb_matrix_indicators_user(void) {
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        if (i != ESC_LED_INDEX) rgb_matrix_set_color(i, RGB_OFF);
+    }
+    return true;
+}

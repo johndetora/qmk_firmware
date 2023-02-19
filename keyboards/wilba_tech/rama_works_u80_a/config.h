@@ -38,118 +38,33 @@
 /* COL2ROW, ROW2COL*/
 #define DIODE_DIRECTION COL2ROW
 
-#define BACKLIGHT_PIN B7
-
-// #define BACKLIGHT_BREATHING
-// #define BACKLIGHT_LEVELS 3
-
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
-
-/* define if matrix has ghost (lacks anti-ghosting diodes) */
-//#define MATRIX_HAS_GHOST
-
-/* number of backlight levels */
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
 #define LOCKING_RESYNC_ENABLE
 
-/* If defined, GRAVE_ESC will always act as ESC when CTRL is held.
- * This is userful for the Windows task manager shortcut (ctrl+shift+esc).
- */
-// #define GRAVE_ESC_CTRL_OVERRIDE
-
-/*
- * Force NKRO
- *
- * Force NKRO (nKey Rollover) to be enabled by default, regardless of the saved
- * state in the bootmagic EEPROM settings. (Note that NKRO must be enabled in the
- * makefile for this to work.)
- *
- * If forced on, NKRO can be disabled via magic key (default = LShift+RShift+N)
- * until the next keyboard reset.
- *
- * NKRO may prevent your keystrokes from being detected in the BIOS, but it is
- * fully operational during normal computer usage.
- *
- * For a less heavy-handed approach, enable NKRO via magic key (LShift+RShift+N)
- * or via bootmagic (hold SPACE+N while plugging in the keyboard). Once set by
- * bootmagic, NKRO mode will always be enabled until it is toggled again during a
- * power-up.
- *
- */
-//#define FORCE_NKRO
-
-/*
- * Feature disable options
- *  These options are also useful to firmware size reduction.
- */
-
-/* disable debug print */
-//#define NO_DEBUG
-
-/* disable print */
-//#define NO_PRINT
-
-/* disable action features */
-//#define NO_ACTION_LAYER
-//#define NO_ACTION_TAPPING
-//#define NO_ACTION_ONESHOT
 
 // IS31FL3731 driver
-#define DRIVER_COUNT 3
-#define RGB_MATRIX_LED_COUNT 108
+#ifdef RGB_MATRIX_ENABLE
+    #define DRIVER_COUNT 3
+    #define RGB_MATRIX_LED_COUNT 88
 
-#define RGB_BACKLIGHT_ENABLED 1
+    // This is a 7-bit address, that gets left-shifted and bit 0
+    // set to 0 for write, 1 for read (as per I2C protocol)
+    // The address will vary depending on your wiring:
+    // 0b1110100 AD <-> GND
+    // 0b1110111 AD <-> VCC
+    // 0b1110101 AD <-> SCL
+    // 0b1110110 AD <-> SDA
+    #define DRIVER_ADDR_1 0x74  // 11101[00] <- GND
+    #define DRIVER_ADDR_2 0x76  // 11101[10] <- SDA
+    #define DRIVER_ADDR_3 0x75  // 11101[01] <- SCL
+#endif
 
-// This conditionally compiles the backlight code for U80-A specifics
-#define RGB_BACKLIGHT_U80_A
 
-// enable/disable LEDs based on layout
-// they aren't really used if RGB_BACKLIGHT_M60_A defined
-#define RGB_BACKLIGHT_USE_SPLIT_BACKSPACE 1
-#define RGB_BACKLIGHT_USE_SPLIT_LEFT_SHIFT 0
-#define RGB_BACKLIGHT_USE_SPLIT_RIGHT_SHIFT 1
-#define RGB_BACKLIGHT_USE_7U_SPACEBAR 1
-#define RGB_BACKLIGHT_USE_ISO_ENTER 0
-#define RGB_BACKLIGHT_DISABLE_HHKB_BLOCKER_LEDS 1
-
-// disable backlight when USB suspended (PC sleep/hibernate/shutdown)
-#define RGB_BACKLIGHT_DISABLE_WHEN_USB_SUSPENDED 0
-
-// disable backlight after timeout in minutes, 0 = no timeout
-#define RGB_BACKLIGHT_DISABLE_AFTER_TIMEOUT 0
-
-// the default brightness
-#define RGB_BACKLIGHT_BRIGHTNESS 255
-
-// the default effect (RGB test)
-#define RGB_BACKLIGHT_EFFECT 255
-
-// the default effect speed (0-3)
-#define RGB_BACKLIGHT_EFFECT_SPEED 0
-
-// the default color1 and color2
-#define RGB_BACKLIGHT_COLOR_1 { .h = 0, .s = 255 }
-#define RGB_BACKLIGHT_COLOR_2 { .h = 127, .s = 255 }
-
-// These define which keys in the matrix are alphas/mods
-// Used for backlight effects so colors are different for
-// alphas vs. mods
-// Each value is for a row, bit 0 is column 0
-// Alpha=0 Mod=1
-#define RGB_BACKLIGHT_ALPHAS_MODS_ROW_0 0b1110000000000000
-#define RGB_BACKLIGHT_ALPHAS_MODS_ROW_1 0b1100000000000001
-#define RGB_BACKLIGHT_ALPHAS_MODS_ROW_2 0b1111000000000001
-#define RGB_BACKLIGHT_ALPHAS_MODS_ROW_3 0b1111000000000001
-#define RGB_BACKLIGHT_ALPHAS_MODS_ROW_4 0b1111100000000111
-
-#define RGB_BACKLIGHT_CAPS_LOCK_INDICATOR { .color = { .h = 0, .s = 0 }, .index = 255 }
-#define RGB_BACKLIGHT_LAYER_1_INDICATOR { .color = { .h = 0, .s = 0 }, .index = 255 }
-#define RGB_BACKLIGHT_LAYER_2_INDICATOR { .color = { .h = 0, .s = 0 }, .index = 255 }
-#define RGB_BACKLIGHT_LAYER_3_INDICATOR { .color = { .h = 0, .s = 0 }, .index = 255 }
 
 // Backlight config starts after VIA's EEPROM usage,
 // dynamic keymaps start after this.

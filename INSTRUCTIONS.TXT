@@ -43,3 +43,22 @@ void keyboard_post_init_user(void) {
   rgblight_sethsv_noeeprom(180, 255, 255); // sets the color to teal/cyan without saving
   rgblight_mode_noeeprom(RGBLIGHT_MODE_BREATHING + 3); // sets mode to Fast breathing without saving
 }
+
+
+
+
+In the first part of g_led_config on line 147 is where the LED index for each key is. Escape is LED index 70, in the top left corner.
+
+As far as making only the Escape key go on and off, there are a few ways to do that. 
+The easiest way is probably to mask out all of the other keys, that way the only thing affected by RGB effects will be the Escape key. 
+If you explain exactly what you want to do, I can help you write more specific code. In keymap.c:
+
+#define ESC_LED_INDEX 70
+bool rgb_matrix_indicators_user(void) {
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        if (i != ESC_LED_INDEX) rgb_matrix_set_color(i, RGB_OFF);
+    }
+    return true;
+}
+Then you can put RGB_TOG on one of your keys to turn the RGB on and off, and it should only show on the Escape key LED. 
+Try that out and let me know. Like I said, that code was a hot mess, and I'm just now realizing how late it is. I'd be surprised if I didn't miss something.
