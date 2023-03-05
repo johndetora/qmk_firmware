@@ -20,10 +20,11 @@
 extern MidiDevice midi_device;
 
 #define _BASE     0
-#define _VIA1     1
-#define _VIA2     2
-#define _MIDI     3
-#define _BASEMOD  4
+#define _MOD      1
+#define _RGBB     2
+#define _RGBH     3
+#define _RGBS     4
+#define _MIDI     5
 
 
 enum custom_keycodes {
@@ -52,43 +53,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(
         KC_KP_SLASH, KC_PAST, KC_PMNS, \
   /* KC_MUTE, KC_MPRV, KC_MPLY, KC_MNXT,\ */
-  TO(_VIA1), KC_7, KC_8, KC_9, \
+  TO(_MOD), KC_7, KC_8, KC_9, \
   KC_PPLS, KC_4, KC_5, KC_6,  \
-  MO(_VIA1), KC_1, KC_2,  KC_3,  \
+  KC_LCTL, KC_1, KC_2,  KC_3,  \
   KC_ENT, KC_DEL, KC_KP_DOT, KC_0     \
   ),  
   
-     [_VIA1] = LAYOUT(
-           TO(_BASE), TO(_VIA2), TO(_MIDI), \
-  TO(_VIA2), KC_TRNS, KC_UP, KC_TRNS, \
-  KC_TRNS, KC_LEFT, KC_DOWN, KC_RIGHT, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_DEL, KC_TRNS  \
-  ),
-    [_VIA2] = LAYOUT(
-           RGB_HUI, RGB_SAI, RGB_VAI, \
-  TO(_BASE), RGB_HUD, RGB_SAD, RGB_VAD, \
- KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
-   RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI  \
+     [_MOD] = LAYOUT(
+           KC_F10, KC_F11, KC_F12, \
+  TO(_BASE), KC_F7, KC_F8, KC_F9, \
+  LT(_RGBB, KC_TRNS), KC_F4, KC_F5, KC_F6, \
+  LT(_RGBH, KC_TRNS), KC_F1, KC_F2, KC_F3, \
+  LT(_RGBS, KC_TRNS), KC_TRNS, KC_COMM, KC_LCTL  \
   ),
 
+
+    [_RGBB] = LAYOUT(
+           RGB_HUI, RGB_SAI, RGB_VAI, \
+ RGB_TOG, RGB_HUD, RGB_SAD, RGB_VAD, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+   KC_TRNS, RGB_HUI, RGB_SAI, KC_6  \
+  ),
+
+    [_RGBH] = LAYOUT(
+           RGB_HUI, RGB_SAI, RGB_VAI, \
+  RGB_TOG, RGB_HUD, RGB_SAD, RGB_VAD, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+   KC_TRNS, RGB_HUI, RGB_SAI, RGB_VAI  \
+  ),
+    
+    [_RGBS] = LAYOUT(
+           RGB_HUI, RGB_SAI, RGB_VAI, \
+  RGB_TOG, RGB_HUD, RGB_SAD, RGB_VAD, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, \
+   KC_TRNS, RGB_HUI, RGB_SAI, RGB_VAI  \
+  ),
   [_MIDI] = LAYOUT(
-        TO(_VIA1), MI_OCTD, MI_OCTU, \
-  TO(_BASEMOD), MI_A_2, MI_B_2, MI_C_3, \
+        TO(_MOD), MI_OCTD, MI_OCTU, \
+  TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
   MI_D_2, MI_E_2, MI_F_2, MI_G_2, \
   MI_G_1, MI_A_1, MI_B_1, MI_C_2, \
   MI_C_1, MI_D_1, MI_E_1, MI_F_1  \
   ),
 
-  [_BASEMOD] = LAYOUT(
-        TO(_VIA1), MI_OCTD, MI_OCTU, \
-  TO(_BASE), MI_A_2, MI_B_2, MI_C_3, \
-  MI_D_2, MI_E_2, MI_F_2, MI_G_2, \
-  MI_G_1, MI_A_1, MI_B_1, MI_C_2, \
-  //Reset Tiling
-  HYPR(KC_R), MI_D_1, MI_E_1, KC_TRNS  \
-  ),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -98,8 +108,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 //Listens for keycodes, EXPERIMENTAL
 // bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 //   // EXPERIMENTAL
-//  // const uint16_t layerList[] = {_BASE, _VIA1, _VIA2, _MIDI};
-//   //int layerIndex = 0;
+// //  const uint16_t layerList[] = {_BASE, _MOD, _MOD2, _RGBB, _RGBH, _RGBS};
+//   // int layerIndex = 0;
   
 
 //    switch (keycode) {
@@ -135,35 +145,65 @@ void matrix_scan_user(void) {
 }
 
 // ENCODER
+// TODO: use rgblight_get_hue()/sat()/val() and save to base or mod
 bool encoder_update_user(uint8_t index, bool clockwise) {
   switch (get_highest_layer(layer_state)) {
         case _BASE:
           if (clockwise) {
-            // tap_code(KC_VOLU);
+            tap_code(KC_LBRC);
           } else {
-            // tap_code(KC_VOLD);
+            tap_code(KC_RBRC);
           }
           return true;
-          break;
-          // ENCODER LED
-        // case _VIA2:
-        //   if (clockwise) {
-        //     tap_code(RGB_HUI);                             
-        //   } else {
-        //     tap_code(RGB_MODE_REVERSE);
-        //   }
-        //   return true;
-        //   break;
-          // Backlight
-        case _BASEMOD:
+
+        case _MOD:
           if (clockwise) {
-            tap_code(KC_RIGHT);
+            tap_code(KC_PGUP);
           }else {
-            tap_code(KC_LEFT);
+            tap_code(KC_PGDN);
           }
           return true;
-          break;
-       
+
+        case _RGBB:
+          if (clockwise) {
+          rgblight_increase_val();
+          }else {
+           rgblight_decrease_val();
+          }
+          return true;
+
+        case _RGBH:
+          if (clockwise) {
+           rgblight_increase_hue();
+          }else {
+           rgblight_decrease_hue();
+          }
+          return true;
+
+        case _RGBS:
+          if (clockwise) {
+            rgblight_increase_sat();
+          }else {
+            rgblight_decrease_sat();
+          }
+          return true;
+
+          //   case _RGBH:
+          // if (clockwise) {
+          //   tap_code(KC_PGUP);
+          // }else {
+          //   tap_code(KC_PGDN);
+          // }
+          // return true;
+            
+          //   case _RGBS:
+          // if (clockwise) {
+          //   tap_code(KC_PGUP);
+          // }else {
+          //   tap_code(KC_PGDN);
+          // }
+          // return true;
+      
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             return true;
@@ -182,13 +222,13 @@ void led_set_kb(uint8_t usb_led) {
 // layer_state_t layer_state_set_user(layer_state_t state) {
 //     switch (get_highest_layer(layer_state)) {
 //     case _BASE:
-//         rgblight_setrgb (0x00,  0x00, 0xFF);
-        
-//         break;
-//     case _VIA1:
+//         // rgblight_setrgb (0xFF,  0xC8, 0x33);
 //         rgblight_setrgb (0xFF,  0x00, 0x00);
 //         break;
-//     case _VIA2:
+//     case _MOD:
+//         rgblight_setrgb (0xFF,  0x00, 0x00);
+//         break;
+//     case _MOD2:
 //         rgblight_setrgb (0x00,  0xFF, 0x00);
 //         break;
 //     case _MIDI:
@@ -205,28 +245,33 @@ void led_set_kb(uint8_t usb_led) {
 void oled_task_user(void) {
     // Host Keyboard Layer Status
 
-    oled_write_P(PSTR("LAYER: "), false);
+    // oled_write_P(PSTR("LAYER: "), false);
   
     switch (get_highest_layer(layer_state)) {
         case _BASE:
+            // rgblight_get_hue()
              oled_write_P(PSTR("Base"), false);
+      
         //oled_write_P(testChar, false);
-            //  rgblight_setrgb (0xFF, 0xFF, 0xB2); for changing light per layer
+            // rgblight_setrgb (0xFF, 0xD4, 0xB2); 
             break;
        
-        case _VIA1:
+        case _MOD:
             oled_write_P(PSTR("MOD"), false);
+              // rgblight_setrgb (0xFF,  0xC8, 0x33);
             break;
-        case _VIA2:
-            oled_write_P(PSTR("Backlight"), false);
+         case _RGBB:
+            oled_write_P(PSTR("RGB Brightness"), false);
+            break;
+         case _RGBH:
+            oled_write_P(PSTR("RGB HUE"), false);
+            break;
+         case _RGBS:
+            oled_write_P(PSTR("RGB Saturation"), false);
             break;
         case _MIDI:
             oled_write_P(PSTR("EAGLE HAS LANDED MIDI"), false);
-            rgblight_setrgb (0x7F, 0xFF, 0xFA);
-            break;
-         case _BASEMOD:
-            oled_write_P(PSTR("Basemod"), false);
-            rgblight_setrgb (0xF9, 0x6D, 0x6D);
+            // rgblight_setrgb (0x7F, 0xFF, 0xFA);
             break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
