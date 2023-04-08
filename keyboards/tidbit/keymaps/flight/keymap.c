@@ -53,14 +53,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
  
     [_BASE] = LAYOUT(
-         KC_NUMLOCK, KC_NUBS, KC_EXEC,  \
+         KC_NUMLOCK, KC_NUBS, KC_KP_ASTERISK,  \
   TO(_MOD), KC_P7, KC_P8, KC_P9, \
   KC_RALT, KC_P4, HYPR_T(KC_P5), KC_P6, \
-  KC_RGUI, KC_P1, KC_P2,  KC_P3,     \
-  KC_RCTL, KC_RSFT, KC_P0, KC_PDOT \
-  ), 
+  RGUI_T(KC_PPLS), KC_P1, KC_P2,  KC_P3,     \
+  RCTL_T(KC_PMNS), RSFT_T(KC_GRV), KC_P0, KC_PDOT \
+  ),
   
-     [_MOD] = LAYOUT(
+  /*
+  // [_BASE] = LAYOUT(
+  //        KC_NUMLOCK, KC_NUBS, KC_KP_ASTERISK,  \
+  // TO(_MOD), KC_P7, KC_P8, KC_P9, \
+  // KC_RALT, KC_P4, HYPR_T(KC_P5), KC_P6, \
+  // KC_RGUI, KC_P1, KC_P2,  KC_P3,     \
+  // KC_RCTL, KC_RSFT, KC_P0, KC_PDOT \
+  // ),   
+  */   
+  
+  [_MOD] = LAYOUT(
            KC_F10, KC_F11, KC_F12, \
   TO(_RGB), KC_F7, KC_F8, KC_F9, \
   KC_TRNS, KC_F4, HYPR_T(KC_F5), KC_F6, \
